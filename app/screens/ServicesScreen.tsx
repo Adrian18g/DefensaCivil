@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { fetchServices } from './ApiService';
 
 const ServicesScreen: React.FC = () => {
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadServices = async () => {
+    const fetchServices = async () => {
+      const url = 'https://adamix.net/defensa_civil/def/servicios.php';
       try {
-        const data = await fetchServices();
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
         setServices(data);
       } catch (error) {
         console.error('Failed to fetch services:', error);
@@ -18,7 +22,7 @@ const ServicesScreen: React.FC = () => {
       }
     };
 
-    loadServices();
+    fetchServices();
   }, []);
 
   return (

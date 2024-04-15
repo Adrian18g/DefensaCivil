@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { fetchSpecificNews } from './ApiService';
 
 const SpecificNewsScreen: React.FC = () => {
   const [news, setNews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadNews = async () => {
+    const fetchSpecificNews = async () => {
+      const url = 'https://adamix.net/defensa_civil/def/noticias_especificas.php';
       try {
-        const data = await fetchSpecificNews();
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
         setNews(data);
       } catch (error) {
         console.error('Failed to fetch specific news:', error);
@@ -18,7 +22,7 @@ const SpecificNewsScreen: React.FC = () => {
       }
     };
 
-    loadNews();
+    fetchSpecificNews();
   }, []);
 
   return (

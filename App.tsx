@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { RootStackParamList } from "./Types/navigationTypes"; 
+import { RootStackParamList } from "./Types/navigationTypes"; // Asegúrate de que la ruta sea correcta
 import Login from "./app/screens/Login";
 import HomeScreen from "./app/screens/HomeScreen";
 import Emergencies_Details from "./app/screens/Emergencies_Details";
@@ -19,10 +19,12 @@ export default function App() {
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, setUser);
-        return () => unsubscribe(); // Clean up the subscription
+        const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (currentUser) => {
+            console.log('Usuario actual:', currentUser);
+            setUser(currentUser);
+        });
+        return () => unsubscribe();
     }, []);
-
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName="Login">
