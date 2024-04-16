@@ -1,13 +1,13 @@
 import React, { useRef } from 'react';
-import { View, StyleSheet, Text, Animated, Image, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, Animated, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { useNavigation } from '@react-navigation/native';
 
 const imagenes = [
-  "https://i.pinimg.com/564x/c4/d1/d1/c4d1d1242729d84a0b5c4b4d98ae27b4.jpg",
-  "https://i.pinimg.com/564x/4c/43/d1/4c43d1389bcd37ab01c6a4d2ac1cdd31.jpg",
-  "https://i.pinimg.com/564x/a2/76/3a/a2763ac30c322a4ddf65b28aa84780b4.jpg",
+  "https://www.defensacivil.gob.do/images/docs/DC-logo-2017.png",
+  "https://blogger.googleusercontent.com/img/a/AVvXsEhwtjqiA2Rtik_-OhK5fZX8O5AhswC9Qkm2_jLLiTfZHy9IEJHRZ3Sy7ywTupcog-_JIC7CnOtTUmI-gWWFn3QmBp-H85noK1OuozN-XQJSz7oCeSI3tPoUqyWiKQ1b2GjaorNFXIFpmsEm9WJ08RwqyjaXuW8RfDnceP3iyNg_aYPUqxKtwkHRSLuV=s320",
+  "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.elcaribe.com.do%2Fdestacado%2Fdefensa-civil-dice-que-esta-lista-para-asistir-durante-navidad-y-ano-nuevo%2F&psig=AOvVaw0GJ7huQ-SoOh6N0gCq07e1&ust=1713391158792000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCJCr6Mzdx4UDFQAAAAAdAAAAABAp",
 ];
 
 const width = Dimensions.get('window').width;
@@ -36,9 +36,12 @@ const Inside: React.FC = () => {
           { useNativeDriver: true }
         )}
         renderItem={({ item }) => (
-          <View style={styles.imageContainer}>
+          <TouchableOpacity
+            style={styles.imageContainer}
+            onPress={() => console.log('Image pressed')}
+          >
             <Image source={{ uri: item }} style={styles.image} />
-          </View>
+          </TouchableOpacity>
         )}
       />
     </View>
@@ -58,14 +61,15 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   imageContainer: {
-    width: width,
-    height: height * 0.75,
+    width: width * 0.7,
+    height: height * 0.4,
     alignItems: 'center',
     justifyContent: 'center',
+    marginHorizontal: 10,
   },
   image: {
-    width: width * 0.8,
-    height: height * 0.75,
+    width: '90%',
+    height: '90%',
     resizeMode: 'cover',
     borderRadius: 20,
   }
