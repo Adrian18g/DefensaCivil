@@ -1,41 +1,74 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native';
+import { useAuth } from '../../context/AuthContext';
+
+interface NewsItem {
+  titulo: string;
+  contenido: string;
+}
 
 const SpecificNewsScreen: React.FC = () => {
-  const [news, setNews] = useState<any[]>([]);
+  const { token } = useAuth(); 
+  const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSpecificNews = async () => {
-      const url = 'https://adamix.net/defensa_civil/def/noticias_especificas.php';
+      if (!token) {
+        const errorMsg = "No token provided.";
+        Alert.alert("Error", errorMsg);
+        setError(errorMsg);
+        setLoading(false);
+        return;
+      }
+
+      const url = `https://cors-anywhere.herokuapp.com/https://adamix.net/defensa_civil/def/noticias_especificas.php`;
+
       try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(`HTTP error! Status: ${response.status}`);
         }
+
         const data = await response.json();
-        setNews(data);
-      } catch (error) {
-        console.error('Failed to fetch specific news:', error);
+        if (data.exito) {
+          setNews(data.datos);
+        } else {
+          throw new Error(data.mensaje);
+        }
+      } catch (error: any) { 
+        setError(error.toString());
+        Alert.alert("Error", error.toString());
       } finally {
         setLoading(false);
       }
     };
 
     fetchSpecificNews();
-  }, []);
+  }, [token]);
+
+  if (loading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error: {error}</Text>;
 
   return (
     <ScrollView style={styles.container}>
-      {loading ? (
-        <Text>Loading specific news...</Text>
-      ) : (
+      {news.length > 0 ? (
         news.map((item, index) => (
           <View key={index} style={styles.item}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text>{item.description}</Text>
+            <Text style={styles.title}>{item.titulo}</Text>
+            <Text>{item.contenido}</Text>
           </View>
         ))
+      ) : (
+        <Text>No specific news found.</Text>
       )}
     </ScrollView>
   );

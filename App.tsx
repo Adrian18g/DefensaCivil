@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+// App.tsx
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./app/screens/Login";
 import Inside from "./app/screens/Inside";
@@ -9,7 +11,10 @@ import SpecificNewsScreen from "./app/screens/SpecificNewsScreen";
 import VideosScreen from "./app/screens/VideosScreen";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { FIREBASE_AUTH } from "./FirebaseConfig";
+import { AuthProvider } from './context/AuthContext';
+import CustomDrawerContent from './components/CustomDrawerContent';
 
+const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -20,20 +25,26 @@ export default function App() {
     }, []);
 
     return (
-        <NavigationContainer>
-            <Stack.Navigator initialRouteName="Login">
+        <AuthProvider>
+            <NavigationContainer>
                 {user ? (
-                    <>
-                        <Stack.Screen name="Home" component={Inside} options={{ headerShown: false }}/>
-                        <Stack.Screen name="Services" component={ServicesScreen} />
-                        <Stack.Screen name="News" component={NewsScreen} />
-                        <Stack.Screen name="SpecificNews" component={SpecificNewsScreen} />
-                        <Stack.Screen name="Videos" component={VideosScreen} />
-                    </>
+                    <Drawer.Navigator 
+                      initialRouteName="Home"
+                      drawerContent={props => <CustomDrawerContent {...props} />}
+                    >
+                        <Drawer.Screen name="Home" component={Inside} options={{ headerShown: false }} />
+                        <Drawer.Screen name="Services" component={ServicesScreen} />
+                        <Drawer.Screen name="News" component={NewsScreen} />
+                        <Drawer.Screen name="Specific News" component={SpecificNewsScreen} />
+                        <Drawer.Screen name="Videos" component={VideosScreen} />
+                    </Drawer.Navigator>
                 ) : (
-                    <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+                    <Stack.Navigator>
+                        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+                    </Stack.Navigator>
                 )}
-            </Stack.Navigator>
-        </NavigationContainer>
+            </NavigationContainer>
+        </AuthProvider>
     );
 }
+

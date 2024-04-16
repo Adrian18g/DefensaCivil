@@ -1,92 +1,98 @@
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Button, TextInput, ActivityIndicator } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, TextInput, Button, ActivityIndicator, Text } from 'react-native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const auth = FIREBASE_AUTH;
-
+    const { setToken } = useAuth();
 
     const signIn = async () => {
         setLoading(true);
         try {
-          const response = await signInWithEmailAndPassword(auth, email, password);
-          console.log(response);
-        } catch (error:any) {
-          console.error(error);
-          alert("Signing in failed: " + error.message);
+            const userCredential = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+            const token = await userCredential.user.getIdToken();
+            setToken(token);
+            console.log("Logged in with token:", token);
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error(error);
+                alert("Signing in failed: " + error.message);
+            } else {
+                console.error("An unexpected error occurred:", error);
+                alert("Signing in failed due to an unexpected error");
+            }
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };
-    
-      const signUp = async () => {
-        setLoading(true);
-        try {
-          const response = await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
-          console.log(response);
-          alert("Checks your emails!");
-        } catch (error:any) {
-          console.error(error);
-          alert("Create account failed: " + error.message);
-        } finally {
-          setLoading(false);
-        }
-      };
+    };
 
     return (
         <View style={styles.container}>
-        <KeyboardAvoidingView behavior="padding">
-        <TextInput
-            value={email}
-            style={styles.input}
-            placeholder="Email"
-            autoCapitalize="none"
-            onChangeText={(text: string) => setEmail(text)}
-        ></TextInput>
-        <TextInput
-            value={password}
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry={true}
-            onChangeText={(text: string) => setPassword(text)}
-        ></TextInput>
-
-      {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
-      ) : (
-        <>
-          <Button title="Login" onPress={signIn} />
-          <Button title="Create Account" onPress={signUp} />
-        </>
-      )}
-        </KeyboardAvoidingView>
-    </View>
+            <View style={styles.card}>
+                <Text style={styles.title}>Login</Text>
+                <TextInput
+                    value={email}
+                    onChangeText={setEmail}
+                    style={styles.input}
+                    placeholder="Email"
+                    autoCapitalize="none"
+                />
+                <TextInput
+                    value={password}
+                    onChangeText={setPassword}
+                    style={styles.input}
+                    placeholder="Password"
+                    secureTextEntry={true}
+                />
+                {loading ? (
+                    <ActivityIndicator size="large" color="#0000ff" style={styles.loadingIndicator} />
+                ) : (
+                    <Button title="Login" onPress={signIn} />
+                )}
+            </View>
+        </View>
     );
 };
 
-export default Login;
-
 const styles = StyleSheet.create({
     container: {
-      marginHorizontal: 20,
-      flex: 1,
-      justifyContent: "center",
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-  
+    card: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        width: '80%',
+        maxWidth: 400,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
     input: {
-      marginVertical: 4,
-      height: 50,
-      borderWidth: 1,
-      borderRadius: 4,
-      padding: 10,
-      backgroundColor: "#fff",
+        marginVertical: 10,
+        height: 50,
+        borderWidth: 1,
+        borderRadius: 4,
+        padding: 10,
+        backgroundColor: '#f0f0f0',
     },
-  });
+    loadingIndicator: {
+        marginTop: 10,
+    },
+});
+
+export default Login;
