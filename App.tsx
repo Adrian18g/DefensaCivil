@@ -1,51 +1,39 @@
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./app/screens/Login";
 import Inside from "./app/screens/Inside";
-import Emergencies_Details from "./app/screens/Emergencies_Details";
-import { useEffect, useState } from "react";
-import { User, onAuthStateChanged } from "firebase/auth";
+import ServicesScreen from "./app/screens/ServicesScreen";
+import NewsScreen from "./app/screens/NewsScreen";
+import SpecificNewsScreen from "./app/screens/SpecificNewsScreen";
+import VideosScreen from "./app/screens/VideosScreen";
+import { onAuthStateChanged, User } from "firebase/auth";
 import { FIREBASE_AUTH } from "./FirebaseConfig";
 
 const Stack = createNativeStackNavigator();
 
-const InsideStack = createNativeStackNavigator();
-
-function InsideLayout() {
-  return (
-    <InsideStack.Navigator>
-      <InsideStack.Screen name="Emergencies" component={Inside} />
-      <InsideStack.Screen name="Details" component={Emergencies_Details} />
-    </InsideStack.Navigator>
-  );
-}
-
 export default function App() {
-  const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      setUser(user);
-    });
-  }, []);
+    useEffect(() => {
+        return onAuthStateChanged(FIREBASE_AUTH, setUser);
+    }, []);
 
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        {user ? (
-          <Stack.Screen
-            name="Inside"
-            component={InsideLayout}
-            options={{ headerShown: false }}
-          />
-        ) : (
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{ headerShown: false }}
-          />
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+    return (
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="Login">
+                {user ? (
+                    <>
+                        <Stack.Screen name="Home" component={Inside} options={{ headerShown: false }}/>
+                        <Stack.Screen name="Services" component={ServicesScreen} />
+                        <Stack.Screen name="News" component={NewsScreen} />
+                        <Stack.Screen name="SpecificNews" component={SpecificNewsScreen} />
+                        <Stack.Screen name="Videos" component={VideosScreen} />
+                    </>
+                ) : (
+                    <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+                )}
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
 }
