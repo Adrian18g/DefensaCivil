@@ -9,6 +9,7 @@ import Situations_Maps from "./app/screens/Situations_Maps";
 import CreateUser from "./app/screens/create_User";
 import ChangePass from "./app/screens/change_Password";
 import Markers from "./markers";
+import { AuthProvider } from './context/AuthContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +33,7 @@ function InsideLayout() {
 
 export default function App() {
   return (
+    <AuthProvider>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
       <Stack.Screen
@@ -41,5 +43,6 @@ export default function App() {
           />
       </Stack.Navigator>
     </NavigationContainer>
+    </AuthProvider>
   );
 }

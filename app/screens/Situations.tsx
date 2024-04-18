@@ -12,7 +12,7 @@ import { NavigationProp, RouteProp } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { FAB } from "react-native-paper";
 import axios from "axios";
-import { useRoute } from '@react-navigation/native';
+import { useRoute } from "@react-navigation/native";
 
 // Dentro de tu componente Situations
 // Acceder al token
@@ -21,15 +21,16 @@ interface SituationCardProps {
   navigation: NavigationProp<any, any>; // Add navigation prop to SituationCardProps
 }
 type SituationsRouteParams = {
-    token: string;
-  };
+  token: string;
+};
 
-
-const Situations= ({navigation}:SituationCardProps) =>{ // Add navigation prop to Situations component
+const Situations = ({ navigation }: SituationCardProps) => {
+  // Add navigation prop to Situations component
   const [loading, setLoading] = useState<boolean>(true);
-  const route = useRoute<RouteProp<Record<string, SituationsRouteParams>, 'Home'>>();
+  const route =
+    useRoute<RouteProp<Record<string, SituationsRouteParams>, "Home">>();
   const token = route.params?.token;
-  
+
   const [situaciones, setSituaciones] = useState<any[]>([]);
 
   useEffect(() => {
@@ -46,9 +47,8 @@ const Situations= ({navigation}:SituationCardProps) =>{ // Add navigation prop t
             },
           }
         );
-        setSituaciones(response.data.datos);        
-        console.log(situaciones);
-        
+        setSituaciones(response.data.datos);
+
         setLoading(false);
       } catch (error: any) {
         console.error(error);
@@ -59,30 +59,29 @@ const Situations= ({navigation}:SituationCardProps) =>{ // Add navigation prop t
     fetchData();
   }, [token]);
 
-
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <>
-        <TouchableOpacity onPress={() => navigation.navigate('changePass', { token: token })}>
-          <View style={{ padding: 10, flexDirection: "row" }}>
-            <Text>Change Password</Text>
-            <Ionicons name="key" size={24} color="black" />
-          </View>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("changePass", { token: token })}
+          >
+            <View style={{ padding: 10, flexDirection: "row" }}>
+              <Text>Change Password</Text>
+              <Ionicons name="key" size={24} color="black" />
+            </View>
           </TouchableOpacity>
 
-
-        <TouchableOpacity onPress={() => navigation.navigate('Map',)}>
-          <View style={{ padding: 10, flexDirection: "row" }}>
-            <Text>Map</Text>
-            <Ionicons name="location" size={24} color="black" />
-          </View>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Map")}>
+            <View style={{ padding: 10, flexDirection: "row" }}>
+              <Text>Map</Text>
+              <Ionicons name="location" size={24} color="black" />
+            </View>
+          </TouchableOpacity>
         </>
       ),
     });
   }, []);
-  
 
   return (
     <View style={styles.container}>
@@ -90,36 +89,36 @@ const Situations= ({navigation}:SituationCardProps) =>{ // Add navigation prop t
         <ActivityIndicator size="large" color="#0000ff" />
       ) : (
         <>
-            {situaciones.length === 0 ? (
-                <Text style={styles.noDataText}>No data to display</Text>
-            ) : (
-                <FlatList
-                data={situaciones}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                    style={styles.card}
-                    onPress={() =>
-                        navigation.navigate("Details", {
-                        id: item.id,
-                        titulo: item.titulo,
-                        descripcion: item.descripcion,
-                        fecha: item.fecha,
-                        estado: item.estado,
-                        comment: item.comentario,
-                        foto: item.foto,
-                        })
-                    }
-                    >
-                    <View>
-                        <Text style={styles.title}>{item.titulo}</Text>
-                        <Text style={styles.fecha}>{item.fecha}</Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={24} color="black" />
-                    </TouchableOpacity>
-                )}
-                />
-            )}
+          {situaciones.length === 0 ? (
+            <Text style={styles.noDataText}>No data to display</Text>
+          ) : (
+            <FlatList
+              data={situaciones}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.card}
+                  onPress={() =>
+                    navigation.navigate("Details", {
+                      id: item.id,
+                      titulo: item.titulo,
+                      descripcion: item.descripcion,
+                      fecha: item.fecha,
+                      estado: item.estado,
+                      comment: item.comentario,
+                      foto: item.foto,
+                    })
+                  }
+                >
+                  <View>
+                    <Text style={styles.title}>{item.titulo}</Text>
+                    <Text style={styles.fecha}>{item.fecha}</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={24} color="black" />
+                </TouchableOpacity>
+              )}
+            />
+          )}
         </>
       )}
       <FAB

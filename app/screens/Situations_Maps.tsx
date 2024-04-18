@@ -1,30 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Text, StyleSheet, TouchableOpacity, View, Alert, PermissionsAndroid, ActivityIndicator } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Alert,
+  PermissionsAndroid,
+  ActivityIndicator,
+} from "react-native";
 import MapView, { Callout, Marker } from "react-native-maps";
 import { useNavigation } from "@react-navigation/native";
-import { RouteProp } from "@react-navigation/native";
+import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 
-interface Markers {
-  latitude: number;
-  longitude: number;
-  latitudeDelta: number;
-  longitudeDelta: number;
-  titulo: string;
-  estado:  string;
-
-}
-
-type RootStackParamList = {
-  locations: {
-    markers: Markers[];
-  };
-};
-
-type DetailsRouteProp = RouteProp<RootStackParamList, "locations">;
-
-type Props = {
-  route: DetailsRouteProp;
-};
+const DEFAULT_LATITUDE_DELTA = 0.1;
+const DEFAULT_LONGITUDE_DELTA = 0.1;
 
 interface Coordinates {
   latitude: number;
@@ -33,23 +23,52 @@ interface Coordinates {
   longitudeDelta: number;
 }
 
-export default function Situations_Map({route}:Props) {
+export default function Situations_Map() {
+  const { token } = useAuth();
+
   const requestLocationPermission = async () => {
     try {
-       await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
       );
     } catch (err) {
       console.warn(err);
-    }}
-    if (!PermissionsAndroid.RESULTS.GRANTED) {
-      requestLocationPermission();
     }
-    const { markers } = route.params;
-    console.log(markers);
-    
+  };
+  if (!PermissionsAndroid.RESULTS.GRANTED) {
+    requestLocationPermission();
+  }
 
-  
+  const [situaciones, setSituaciones] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const formData = new FormData();
+        formData.append("token", token);
+        const response = await axios.post(
+          "https://adamix.net/defensa_civil/def/situaciones.php",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log(response.data.datos);
+        setSituaciones(response.data.datos);
+        console.log(situaciones);
+
+
+        
+      } catch (error: any) {
+        console.error(error);
+        Alert.alert("An error has occurred: " + error.message);
+      }
+    };
+
+    fetchData();
+  }, [token]);
 
   const Initial_Regions: Coordinates = {
     // Coordenadas de la Ciudad de Santo Domingo Republica Dominicana
@@ -85,14 +104,14 @@ export default function Situations_Map({route}:Props) {
   return (
     <View style={{ flex: 1 }}>
       <Text>Map</Text>
-      {/* <MapView
+      <MapView
         style={StyleSheet.absoluteFill}
         initialRegion={Initial_Regions}
-        showsUserLocation = {true}
-        showsMyLocationButton = {true}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
         ref={mapRef}
       >
-        {markers.map((marker, index) => (
+        {/* {markers.map((marker, index) => (
           <Marker
             key={index}
             coordinate={marker}
@@ -103,8 +122,8 @@ export default function Situations_Map({route}:Props) {
               </View>
             </Callout>
           </Marker>
-        ))}
-      </MapView> */}
+        ))} */}
+      </MapView>
     </View>
   );
 }

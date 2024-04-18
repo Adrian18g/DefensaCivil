@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import axios from "axios";
 import { NavigationProp } from '@react-navigation/native';
+import { useAuth } from '../../context/AuthContext';
 
 
 interface RouterProps {
@@ -22,6 +23,7 @@ const Login = ({ navigation }: RouterProps) => {
   const [clave, setClave] = useState("");
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
+  const { setToken } = useAuth();
 
   const signIn = async () => {
     setLoading(true);
@@ -44,6 +46,7 @@ const Login = ({ navigation }: RouterProps) => {
       console.log(response.data.datos.token);
       
       if (response.data.exito) {
+        setToken(response.data.datos.token);
         return navigation.navigate("Home", { token: response.data.datos.token })
       }
       Alert.alert("Ha ocurrido un error, intente nuevamente.",

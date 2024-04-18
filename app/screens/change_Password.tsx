@@ -53,7 +53,6 @@ const ChangePass = ({ navigation }: RouterProps) => {
       );
 
       setResponse(response.data);
-      console.log(response.data.datos);
 
       if (response.data.exito) {
         Alert.alert("Clave cambiada con exito.");
