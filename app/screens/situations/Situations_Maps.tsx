@@ -6,15 +6,12 @@ import {
   View,
   Alert,
   PermissionsAndroid,
-  ActivityIndicator,
 } from "react-native";
 import MapView, { Callout, Marker } from "react-native-maps";
-import { useNavigation } from "@react-navigation/native";
-import { useAuth } from "../../context/AuthContext";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import axios from "axios";
+import { useAuth } from "../../../context/AuthContext";
 
-const DEFAULT_LATITUDE_DELTA = 0.1;
-const DEFAULT_LONGITUDE_DELTA = 0.1;
 
 interface Coordinates {
   latitude: number;
@@ -23,23 +20,31 @@ interface Coordinates {
   longitudeDelta: number;
 }
 
+interface Situation {
+  latitud: string;
+  longitud: string;
+  titulo: string;
+  id: string;
+  descripcion: string;
+  fecha: string;
+  estado: string;
+  foto: string;
+}
+
 export default function Situations_Map() {
+  const [markers, setMarkers] = useState<
+    {
+      latitude: number;
+      longitude: number;
+      titulo: string;
+      id: string;
+      descripcion: string;
+      fecha: string;
+      estado: string;
+      foto: string;
+    }[]
+  >([]);
   const { token } = useAuth();
-
-  const requestLocationPermission = async () => {
-    try {
-      await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-      );
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-  if (!PermissionsAndroid.RESULTS.GRANTED) {
-    requestLocationPermission();
-  }
-
-  const [situaciones, setSituaciones] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,12 +60,17 @@ export default function Situations_Map() {
             },
           }
         );
-        console.log(response.data.datos);
-        setSituaciones(response.data.datos);
-        console.log(situaciones);
-
-
-        
+        const newMarkers = response.data.datos.map((situacion: Situation) => ({
+          latitude: parseFloat(situacion.latitud),
+          longitude: parseFloat(situacion.longitud),
+          titulo: situacion.titulo,
+          id: situacion.id,
+          descripcion: situacion.descripcion,
+          fecha: situacion.fecha,
+          estado: situacion.estado,
+          foto: situacion.foto,
+        }));
+        setMarkers(newMarkers);
       } catch (error: any) {
         console.error(error);
         Alert.alert("An error has occurred: " + error.message);
@@ -74,12 +84,12 @@ export default function Situations_Map() {
     // Coordenadas de la Ciudad de Santo Domingo Republica Dominicana
     latitude: 18.4861,
     longitude: -69.9312,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+    latitudeDelta: 0.101,
+    longitudeDelta: 0.101,
   };
 
   const mapRef = useRef<MapView>(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<any>>();
 
   useEffect(() => {
     navigation.setOptions({
@@ -96,9 +106,15 @@ export default function Situations_Map() {
   const focusMap = () => {
     mapRef.current?.animateToRegion(Initial_Regions, 1000);
   };
-
-  const onMarkerPress = (marker: any) => {
-    Alert.alert(marker.name);
+  const onCalloutPress = (marker: any) => {
+    navigation.navigate("Details", {
+      id: marker.id,
+      titulo: marker.titulo,
+      descripcion: marker.descripcion,
+      fecha: marker.fecha,
+      estado: marker.estado,
+      foto: marker.foto,
+    })
   };
 
   return (
@@ -111,18 +127,21 @@ export default function Situations_Map() {
         showsMyLocationButton={true}
         ref={mapRef}
       >
-        {/* {markers.map((marker, index) => (
+        {markers.map((marker, index) => (
           <Marker
             key={index}
-            coordinate={marker}
+            coordinate={{
+              latitude: marker.latitude,
+              longitude: marker.longitude,
+            }}
           >
-            <Callout>
+            <Callout onPress={onCalloutPress}>
               <View style={{padding:10}}>
-                <Text style={{fontSize:24}}>{marker.name}</Text>
+              <Text style={{fontSize:14}}>{marker.titulo}</Text>
               </View>
             </Callout>
           </Marker>
-        ))} */}
+        ))}
       </MapView>
     </View>
   );

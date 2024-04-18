@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -8,6 +8,7 @@ import {
 } from "@react-navigation/drawer";
 
 const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
+
   return (
     <DrawerContentScrollView {...props}>
       <View
@@ -21,7 +22,6 @@ const CustomDrawerContent: React.FC<DrawerContentComponentProps> = (props) => {
       </View>
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
-        <DrawerItem label="Cambiar Contraseña" onPress={() => {}} />
       </DrawerContentScrollView>
     </DrawerContentScrollView>
   );
