@@ -106,16 +106,7 @@ export default function Situations_Map() {
   const focusMap = () => {
     mapRef.current?.animateToRegion(Initial_Regions, 1000);
   };
-  const onCalloutPress = (marker: any) => {
-    navigation.navigate("Details", {
-      id: marker.id,
-      titulo: marker.titulo,
-      descripcion: marker.descripcion,
-      fecha: marker.fecha,
-      estado: marker.estado,
-      foto: marker.foto,
-    })
-  };
+  
 
   return (
     <View style={{ flex: 1 }}>
@@ -135,7 +126,7 @@ export default function Situations_Map() {
               longitude: marker.longitude,
             }}
           >
-            <Callout onPress={onCalloutPress}>
+            <Callout>
               <View style={{padding:10}}>
               <Text style={{fontSize:14}}>{marker.titulo}</Text>
               </View>

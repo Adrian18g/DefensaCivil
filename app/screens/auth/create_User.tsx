@@ -114,7 +114,7 @@ const CreateUser = ({ navigation }: RouterProps) => {
         ) : (
           <>
             <TouchableOpacity style={styles.btn} onPress={signUp}>
-              <Text>Resgistrate</Text>
+              <Text>Registrate</Text>
             </TouchableOpacity>
           </>
         )}

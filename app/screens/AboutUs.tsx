@@ -4,7 +4,7 @@ import { View, ScrollView, StyleSheet, Text, Image, Dimensions } from 'react-nat
 interface Persona {
     id: number;
     nombre: string;
-    foto: string;
+    foto: any; 
     descripcion: string;
 }
 
@@ -12,25 +12,25 @@ const personas: Persona[] = [
     {
         id: 1,
         nombre: 'Adrian',
-        foto: '../../assets/Adrian.jpeg',
+        foto: require('../../assets/Adrian.jpeg'),
         descripcion: 'Desarrollador Movil',
     },
     {
         id: 2,
         nombre: 'Oscar',
-        foto: '../../assets/Oscar.jpeg',
+        foto: require('../../assets/Oscar.jpeg'),
         descripcion: 'Desarrollador Movil',
     },
     {
         id: 3,
         nombre: 'Hendrix',
-        foto: '../../assets/Hendrix.jpeg',
+        foto: require('../../assets/Hendrix.jpeg'),
         descripcion: 'Desarrollador Movil',
     },
     {
         id: 4,
         nombre: 'Fraylian',
-        foto: 'Fraylian.jpeg',
+        foto: require('../../assets/Fraylian.jpeg'),
         descripcion: 'Desarrollador Movil',
     },
 ];
@@ -39,14 +39,13 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const AboutUs: React.FC = () => {
     return (
-      
         <ScrollView contentContainerStyle={styles.container}>
             {personas.map((persona) => (
                 <View key={persona.id} style={styles.card}>
-                <Image source={{uri:'../../assets/Adrian.jpeg'}} style={styles.image} />
-                <Text style={styles.name}>{persona.nombre}</Text>
-                <Text style={styles.position}>{persona.descripcion}</Text>
-              </View>
+                    <Image source={persona.foto} style={styles.image} />
+                    <Text style={styles.name}>{persona.nombre}</Text>
+                    <Text style={styles.position}>{persona.descripcion}</Text>
+                </View>
             ))}
         </ScrollView>
     );
@@ -58,8 +57,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 20,
         marginVertical: 20,
-      },
-      card: {
+    },
+    card: {
         width: '90%',
         backgroundColor: '#fff',
         borderRadius: 10,
@@ -73,21 +72,21 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
         elevation: 5,
-      },
-      image: {
+    },
+    image: {
         width: '100%',
         height: 200,
         borderRadius: 10,
         marginBottom: 10,
-      },
-      name: {
+    },
+    name: {
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 5,
-      },
-      position: {
+    },
+    position: {
         fontSize: 16,
-      },
+    },
 });
 
 export default AboutUs;
