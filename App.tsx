@@ -23,27 +23,11 @@ import History from "./app/screens/site/History";
 
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
 
 function InsideLayout() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Situations" component={Situations} options={{title:"Situaciones"}} />
-      <Stack.Screen name="SignUp" component={CreateUser} options={{headerShown:false}} />
-      <Stack.Screen name="Add_Situations" component={Add_Situations} options={{title:"Reportar Situaciones"}}  />
-      <Stack.Screen name="Details" component={Situations_Details} />
-      <Stack.Screen name="Map" component={Situations_Maps} options={{title:"Mapa de situaciones"}} />
-      {/* <Stack.Screen name="aboutUS" component={}  /> */}
-    </Stack.Navigator>
-  );
-}
-
-const Drawer = createDrawerNavigator();
-
-export default function App() {  
-  return (
-    <AuthProvider>
-    <NavigationContainer>
-      <Drawer.Navigator initialRouteName="Home" drawerContent={props => <CustomDrawerContent {...props}/>}>
+    <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props}/>}>
         <Drawer.Screen name="Home" component={Home} options={{ title: 'Defensa Civil' }} />
         <Drawer.Screen name="Historia" component={History} options={{ title: 'Historia' }} />
         <Drawer.Screen name="Services" component={Services} options={{ title: 'Servicios' }} />
@@ -54,10 +38,26 @@ export default function App() {
         <Drawer.Screen name="Safety_Measures" component={SafetyMeasures} options={{ title: 'Medidas Preventivas' }} />
         <Drawer.Screen name="Members" component={Members} options={{ title: 'Miembros' }} />
         <Drawer.Screen name="AboutUs" component={AboutUs} options={{ title: 'Acerca de Nosotros' }} />
-        <Drawer.Screen name="Login" component={Login} options={{ headerShown: false}} />
-        <Drawer.Screen name="Situaciones" component={InsideLayout} options={{ headerShown:false }} />
-        <Drawer.Screen name="changePass" component={ChangePass} options={{headerTitle:'Cambiar contraseña'}} />
+        <Drawer.Screen name="Login" component={Login} options={{ title:'Login'}} />
       </Drawer.Navigator>
+  );
+}
+
+
+
+export default function App() {  
+  return (
+    <AuthProvider>
+    <NavigationContainer>
+      <Stack.Navigator>
+      <Stack.Screen name="InsideLayout" component={InsideLayout} options={{headerShown:false}} />
+      <Stack.Screen name="Situations" component={Situations} options={{title:"Situaciones"}} />
+      <Stack.Screen name="SignUp" component={CreateUser} options={{headerShown:false}} />
+      <Stack.Screen name="Add_Situations" component={Add_Situations} options={{title:"Reportar Situaciones"}}  />
+      <Stack.Screen name="Details" component={Situations_Details} />
+      <Stack.Screen name="Map" component={Situations_Maps} options={{title:"Mapa de situaciones"}} />
+      <Drawer.Screen name="changePass" component={ChangePass} options={{headerTitle:'Cambiar contraseña'}} />
+    </Stack.Navigator>
     </NavigationContainer>
   </AuthProvider>
   );
